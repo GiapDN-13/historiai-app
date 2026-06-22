@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>HistoriAI 3D</title>
+  <script type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%; width: 100%;
+      background: #EFE7D8; overflow: hidden;
+    }
+    model-viewer {
+      width: 100%; height: 100%;
+      --poster-color: transparent;
+      background: radial-gradient(circle at 50% 35%, #FBF3E6 0%, #EFE7D8 70%, #E2D5BF 100%);
+    }
+    /* Nút AR đẹp hơn */
+    #ar-btn {
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(90deg, #E67E22, #F39C12);
+      color: #fff; border: none; border-radius: 24px;
+      padding: 10px 20px; font-size: 14px; font-weight: 700;
+      font-family: system-ui, sans-serif; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(230,126,34,0.4);
+      display: none;
+    }
+    #err {
+      position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%);
+      text-align: center; font-family: system-ui, sans-serif;
+      color: #7A2218; font-size: 14px; padding: 0 24px; display: none;
+    }
+    .progress-bar {
+      position: absolute; top: 0; left: 0; height: 3px; width: 0%;
+      background: #D4AF37; transition: width 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="bar"></div>
+  <model-viewer
+    id="mv"
+    alt="Nhân vật lịch sử"
+    camera-controls
+    auto-rotate
+    auto-rotate-delay="0"
+    rotation-per-second="20deg"
+    shadow-intensity="1"
+    exposure="1.1"
+    camera-orbit="0deg 85deg auto"
+    min-camera-orbit="auto 0deg auto"
+    max-camera-orbit="auto 180deg auto"
+    interaction-prompt="none"
+    ar
+    ar-modes="webxr scene-viewer quick-look">
+    <button slot="ar-button" id="ar-btn">📱 Xem trong không gian (AR)</button>
+  </model-viewer>
+  <div id="err">Không tải được mô hình 3D.</div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const slug = (params.get('model') || '').replace(/[^a-z0-9\-]/gi, '');
+    const mv = document.getElementById('mv');
+    const bar = document.getElementById('bar');
+    const err = document.getElementById('err');
+    const arBtn = document.getElementById('ar-btn');
+
+    if (slug) {
+      mv.src = 'models/' + slug + '.glb';
+    } else {
+      err.style.display = 'block';
+      err.textContent = 'Thiếu tham số ?model=';
+    }
+
+    mv.addEventListener('progress', (e) => {
+      const p = Math.round((e.detail.totalProgress || 0) * 100);
+      bar.style.width = p + '%';
+      if (p >= 100) setTimeout(() => bar.style.width = '0%', 400);
+    });
+    mv.addEventListener('error', () => {
+      err.style.display = 'block';
+    });
+    // Chỉ hiện nút AR khi thiết bị hỗ trợ
+    mv.addEventListener('load', () => {
+      if (mv.canActivateAR) arBtn.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
