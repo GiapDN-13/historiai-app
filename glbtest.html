@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GLB Test</title>
+  <script type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <style>
+    body{font-family:sans-serif;background:#FDF9F4;margin:0;padding:16px}
+    model-viewer{width:100%;height:70vh;background:#EFE7D8;border-radius:12px}
+    #log{white-space:pre-wrap;font-size:13px;background:#222;color:#0f0;padding:10px;border-radius:8px}
+  </style>
+</head>
+<body>
+  <h3>Test model .glb trực tiếp (Google model-viewer 3.5)</h3>
+  <model-viewer id="mv"
+    src="models/tran-hung-dao.glb"
+    alt="Tran Hung Dao"
+    camera-controls auto-rotate
+    shadow-intensity="1"
+    ar
+    reveal="auto">
+  </model-viewer>
+  <div id="log">đang tải...</div>
+  <script>
+    const mv=document.getElementById('mv');
+    const log=document.getElementById('log');
+    function w(m){log.textContent += "\n"+m;}
+    log.textContent="UA: "+navigator.userAgent;
+    // WebGL check
+    try{
+      const gl=document.createElement('canvas').getContext('webgl2')||document.createElement('canvas').getContext('webgl');
+      w("WebGL: "+(gl?("OK "+gl.getParameter(gl.VERSION)):"KHÔNG CÓ"));
+    }catch(e){w("WebGL error: "+e);}
+    mv.addEventListener('load',()=>w("✓ MODEL LOADED OK"));
+    mv.addEventListener('error',(e)=>w("✗ ERROR: "+JSON.stringify(e.detail||e.type)));
+    mv.addEventListener('progress',(e)=>w("progress "+Math.round(e.detail.totalProgress*100)+"%"));
+  </script>
+</body>
+</html>
