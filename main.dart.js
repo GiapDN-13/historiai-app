@@ -87800,7 +87800,7 @@ m=null
 p=8
 g=t.a
 s=11
-return A.B(n.d.atG("/chat",A.av(["figure_slug",n.a.c,"message",b],t.N,t.z)),$async$o1)
+return A.B(n.d.atG("/chat/speak",A.av(["figure_slug",n.a.c,"text",b],t.N,t.z)),$async$o1)
 case 11:l=g.a(d)
 m=A.ca(J.ir(l,"audio_url"))
 p=2
